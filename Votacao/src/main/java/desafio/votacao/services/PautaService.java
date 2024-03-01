@@ -1,6 +1,7 @@
 package desafio.votacao.services;
 
 import desafio.votacao.entities.Pauta;
+import desafio.votacao.entities.Sessao;
 import desafio.votacao.requests.PautaPostRequestBody;
 import desafio.votacao.requests.PautaPutRequestBody;
 
@@ -18,4 +19,7 @@ public interface PautaService {
 
     void replace(PautaPutRequestBody pautaPutRequestBody);
     void processoDeVotacao(Long pautaId);
+
+    Sessao getSessaoFromPauta(Long id);
+
 }

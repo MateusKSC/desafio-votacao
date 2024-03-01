@@ -26,4 +26,5 @@ public interface AssociadoService {
     boolean isCpfUnique(String cpf, Associado associadoEmValidacao, String requestMethod);
 
     boolean doesAssociadoHavePauta(Associado associado);
+
 }

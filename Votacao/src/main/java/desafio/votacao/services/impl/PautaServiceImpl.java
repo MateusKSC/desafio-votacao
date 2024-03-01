@@ -49,6 +49,19 @@ public class PautaServiceImpl implements PautaService {
                 .orElseThrow(() -> new BadRequestException("Pauta not Found"));
     }
 
+    public Sessao getSessaoFromPauta(Long id){
+        Pauta pauta = findByIdOrThrowBadRequestException(id);
+        Sessao sessao = new Sessao();
+        if(pauta.getSessao() != null){
+            sessao = pauta.getSessao();
+        }
+        else{
+            throw new BadRequestException("A pauta informada não possui nenhuma sessão" +
+                    " de votação registrada!");
+        }
+        return (sessao);
+    }
+
     public boolean verificaUnicidadeCpf(List<String> cpfAssociados) {
         boolean cpfUnico = false;
         for (String string : cpfAssociados) {
@@ -97,7 +110,7 @@ public class PautaServiceImpl implements PautaService {
 
     public void delete(long pautaId) {
         Pauta pauta = findByIdOrThrowBadRequestException(pautaId);
-        pautaRepository.delete(findByIdOrThrowBadRequestException(pautaId));
+        pautaRepository.delete(pauta);
         log.info("The given pauta was successfully deleted");
     }
 

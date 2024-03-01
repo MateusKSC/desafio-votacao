@@ -1,6 +1,7 @@
 package desafio.votacao.controllers;
 
 import desafio.votacao.entities.Pauta;
+import desafio.votacao.entities.Sessao;
 import desafio.votacao.requests.PautaPostRequestBody;
 import desafio.votacao.requests.PautaPutRequestBody;
 import desafio.votacao.services.PautaService;
@@ -40,6 +41,10 @@ public class PautaController {
     public ResponseEntity<List<Pauta>> findByName(@RequestParam String name) {
         return ResponseEntity.ok(pautaService.findByName(name));
     }
+    @GetMapping(path = "/sessao/pauta/{id}")
+    public ResponseEntity<Sessao> getSessaoFromPauta(@RequestParam Long id) {
+        return ResponseEntity.ok(pautaService.getSessaoFromPauta(id));
+    }
     @PostMapping(path = "/associados/{cpf}")
     public ResponseEntity<Pauta> save(@RequestBody @Valid PautaPostRequestBody pautaPostRequestBody,@PathVariable List<String> cpf) {
         return new ResponseEntity<>(pautaService.save(pautaPostRequestBody, cpf), HttpStatus.CREATED);
@@ -49,7 +54,6 @@ public class PautaController {
         pautaService.processoDeVotacao(Id);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
     @PutMapping
     public ResponseEntity<Void> replace(@RequestBody @Valid PautaPutRequestBody pautaPutRequestBody) {
         pautaService.replace(pautaPutRequestBody);
