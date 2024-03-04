@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -30,28 +31,27 @@ public class PautaServiceImpl implements PautaService {
     private final AssociadoServiceImpl associadoService;
 
     private final SessaoServiceImpl sessaoService;
-    private Pauta pautaEmVotacao = new Pauta();
 
     public List<Pauta> listAll() {
         return pautaRepository.findAll();
     }
 
-    public List<Pauta> findByName(String name) {
-        List<Pauta> pautas = pautaRepository.findByNome(name);
+    public List<Pauta> findByNome(String nome) {
+        List<Pauta> pautas = pautaRepository.findByNome(nome);
         if (pautas.isEmpty()) {
-            throw new BadRequestException("Pauta not Found");
+            throw new BadRequestException("Pauta não encontrada!");
         }
         return pautas;
     }
 
-    public Pauta findByIdOrThrowBadRequestException(long pautaId) {
-        return pautaRepository.findById(pautaId)
-                .orElseThrow(() -> new BadRequestException("Pauta not Found"));
+    public Pauta findByIdOrThrowBadRequestException(long id) {
+        return pautaRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Pauta não encontrada!"));
     }
 
     public Sessao getSessaoFromPauta(Long id){
         Pauta pauta = findByIdOrThrowBadRequestException(id);
-        Sessao sessao = new Sessao();
+        Sessao sessao;
         if(pauta.getSessao() != null){
             sessao = pauta.getSessao();
         }
@@ -103,9 +103,9 @@ public class PautaServiceImpl implements PautaService {
             pauta.adicionaAssociados(associado);
         }
 
-        pautaRepository.save(pauta);
+        Pauta savedPauta = pautaRepository.save(pauta);
         log.info("Pauta salva com sucesso");
-        return (pauta);
+        return (savedPauta);
     }
 
     public void delete(long pautaId) {
@@ -116,15 +116,23 @@ public class PautaServiceImpl implements PautaService {
 
     public void replace(PautaPutRequestBody pautaPutRequestBody) {
         Pauta savedPauta = findByIdOrThrowBadRequestException(pautaPutRequestBody.getId());
-        Pauta pauta = PautaMapper.INSTANCE.toPauta(pautaPutRequestBody);
-        pauta.setId(savedPauta.getId());
-        pauta.setSessao(new Sessao());
-        pautaRepository.save(pauta);
-        pautaEmVotacao.setSessao(new Sessao());
-
+        if(!(savedPauta.isSessaoIniciada())) {
+            Pauta pauta = PautaMapper.INSTANCE.toPauta(pautaPutRequestBody);
+            pauta.setId(savedPauta.getId());
+            pauta.setAssociados(savedPauta.getAssociados());
+            pautaRepository.save(pauta);
+        }
+        else{
+            throw new BadRequestException("A modificação de uma pauta só é permitida antes do" +
+                    "processo de votação ter dado início!");
+        }
     }
-
-    public void processoDeVotacao(Long pautaId) {
+    public long calculaTempoRestante(Date agora, Date fim)
+    {
+        long diffInMs = Math.abs(fim.getTime() - agora.getTime());
+        return TimeUnit.SECONDS.convert(diffInMs, TimeUnit.MILLISECONDS);
+    }
+    public void prossegueComVotacao(Long pautaId) {
         Date presente = new Date();
         Pauta pauta = findByIdOrThrowBadRequestException(pautaId);
         List<Associado> associados = pauta.getAssociados();
@@ -132,19 +140,16 @@ public class PautaServiceImpl implements PautaService {
             if (!(pauta.isConcluida())) {
                 if (presente.after(pauta.getSessao().getMomentoDoFim())) {
                     for (Associado associado : associados) {
-                        if (associado.isVoto()) {
-                            pauta.incrementaVotos(true);
-                        } else {
-                            pauta.incrementaVotos(false);
-                        }
+                        pauta.incrementaVotos(associado.isVoto());
                     }
                     pauta.verificaResultadoVotacao();
-                    associadoService.encerraVotacao();
+                    associadoService.resetaVoto();
                     pauta.setConcluida(true);
                     pautaRepository.save(pauta);
                 } else {
                     throw new BadRequestException("O tempo para votação ainda não acabou" +
-                            " (2 minutos)!");
+                            " (restam " + calculaTempoRestante(presente, pauta.getSessao().getMomentoDoFim())
+                            + " segundos)!");
                 }
             } else {
                 throw new BadRequestException("A pauta informada já teve sua votação " +
@@ -158,4 +163,5 @@ public class PautaServiceImpl implements PautaService {
             pautaRepository.save(pauta);
         }
     }
+
 }

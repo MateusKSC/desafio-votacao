@@ -54,27 +54,35 @@ public class AssociadoServiceImpl implements AssociadoService {
     @Transactional
     public Associado save(AssociadoPostRequestBody associadoPostRequestBody) {
         Associado associado = AssociadoMapper.INSTANCE.toAssociado(associadoPostRequestBody);
+        Associado savedAssociado = new Associado();
         if (isCpfUnique(associadoPostRequestBody.getCpf(), associado, "save")) {
-            associadoRepository.save(associado);
+            savedAssociado = associadoRepository.save(associado);
             log.info("Associado salvo com sucesso!");
         }
-        return associado;
+        return savedAssociado;
     }
-
+    public void replace(AssociadoPutRequestBody associadoPutRequestBody) {
+        Associado savedAssociado = findByIdOrThrowBadRequestException(associadoPutRequestBody.getId());
+        Associado associado = AssociadoMapper.INSTANCE.toAssociado(associadoPutRequestBody);
+        associado.setId(savedAssociado.getId());
+        associado.setPautas(savedAssociado.getPautas());
+        associadoRepository.save(associado);
+    }
     public void delete(long associadoId) {
         Associado associado = findByIdOrThrowBadRequestException(associadoId);
         associadoRepository.delete(associado);
         log.info("O associado foi deletado com sucesso!");
     }
 
-    public void definirVoto(AssociadoPutRequestBody associadoPutRequestBody) {
-        Associado savedAssociado = findByCpf(associadoPutRequestBody.getCpf());
+    public void definirVoto(boolean voto, String cpf) {
+        Associado savedAssociado = findByCpf(cpf);
+        Associado associadoToBeSaved = new Associado();
         if (doesAssociadoHavePauta(savedAssociado) && didSessaoStart(savedAssociado)) {
-            Associado associado = AssociadoMapper.INSTANCE.toAssociado(associadoPutRequestBody);
-            associado.setId(savedAssociado.getId());
-            associado.setNome(savedAssociado.getNome());
-            associado.setPautas(savedAssociado.getPautas());
-            associadoRepository.save(associado);
+            associadoToBeSaved.setId(savedAssociado.getId());
+            associadoToBeSaved.setNome(savedAssociado.getNome());
+            associadoToBeSaved.setVoto(voto);
+            associadoToBeSaved.setPautas(savedAssociado.getPautas());
+            associadoRepository.save(associadoToBeSaved);
         }
         else{
             throw new BadRequestException("O associado não faz parte de nenhuma" +
@@ -82,7 +90,7 @@ public class AssociadoServiceImpl implements AssociadoService {
         }
     }
 
-    public void encerraVotacao() {
+    public void resetaVoto() {
         List<Associado> associados = associadoRepository.findAll();
 
         for (Associado associado : associados) {
@@ -121,7 +129,7 @@ public class AssociadoServiceImpl implements AssociadoService {
     }
 
     public boolean doesAssociadoHavePauta(Associado associado) {
-        boolean pautaExists = false;
+        boolean pautaExists;
         if (!(associado.getPautas().isEmpty())) {
             if (!(associado.getPautas().get(associado.getPautas()
                     .size() - 1).isConcluida())) {
@@ -138,11 +146,12 @@ public class AssociadoServiceImpl implements AssociadoService {
     }
 
     public boolean didSessaoStart(Associado associado) {
-        boolean sessaoIsOpened = false;
+        boolean sessaoIsOpened;
         if (associado.getPautas().get(associado.getPautas()
                 .size() - 1).isSessaoIniciada()) {
             sessaoIsOpened = true;
         } else {
+            sessaoIsOpened = false;
             throw new BadRequestException("A sessão de votos da pauta ainda não" +
                     " foi aberta!");
         }

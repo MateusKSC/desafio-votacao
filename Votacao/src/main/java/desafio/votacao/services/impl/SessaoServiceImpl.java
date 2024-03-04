@@ -23,7 +23,7 @@ public class SessaoServiceImpl implements SessaoService {
 
     public Sessao findByIdOrThrowBadRequestException(long sessaoId) {
         return sessaoRepository.findById(sessaoId)
-                .orElseThrow(() -> new BadRequestException("Sessao não encontrada!"));
+                .orElseThrow(() -> new BadRequestException("Sessão não encontrada!"));
     }
 
     public void save(Sessao sessao) {

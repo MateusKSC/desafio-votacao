@@ -19,12 +19,13 @@ public interface AssociadoService {
 
     void delete(long id);
 
-    void definirVoto(AssociadoPutRequestBody associadoPutRequestBody);
+    void definirVoto(boolean voto, String cpf);
 
-    void encerraVotacao();
+    void resetaVoto();
 
     boolean isCpfUnique(String cpf, Associado associadoEmValidacao, String requestMethod);
 
     boolean doesAssociadoHavePauta(Associado associado);
 
+    void replace(AssociadoPutRequestBody associadoPutRequestBody);
 }

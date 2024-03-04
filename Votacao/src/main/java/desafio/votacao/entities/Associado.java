@@ -38,14 +38,4 @@ public class Associado {
     @ManyToMany(mappedBy = "associados")
     @JsonIgnore
     private List<Pauta> pautas = new ArrayList<>();
-
-
-
-
-    /*
-    @ManyToMany(mappedBy = "authors")
-    @JsonIgnoreProperties("authors")
-    private List<Book> booksMade = new ArrayList<>();
-
-     */
 }

@@ -36,18 +36,28 @@ public class AssociadoController {
     }
 
     @GetMapping(path = "/find")
-    public ResponseEntity<List<Associado>> findByName(@RequestParam String name) {
+    public ResponseEntity<List<Associado>> findByNome(@RequestParam String name) {
         return ResponseEntity.ok(associadoService.findByNome(name));
+    }
+    @GetMapping(path = "/{cpf}")
+    public ResponseEntity<Associado> findByCpf(@PathVariable String cpf) {
+        return ResponseEntity.ok(associadoService.findByCpf(cpf));
     }
 
     @PostMapping
     public ResponseEntity<Associado> save(@RequestBody @Valid AssociadoPostRequestBody associadoPostRequestBody) {
         return new ResponseEntity<>(associadoService.save(associadoPostRequestBody), HttpStatus.CREATED);
     }
+
+    @PostMapping(path = "votacao/{cpf}/{voto}")
+    public ResponseEntity<Void> definirVoto(@PathVariable boolean voto, @PathVariable String cpf) {
+        associadoService.definirVoto(voto, cpf);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     @PutMapping
-    public ResponseEntity<Void> definirVoto(@RequestBody @Valid AssociadoPutRequestBody associadoPutRequestBody) {
-        associadoService.definirVoto(associadoPutRequestBody);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> replace(@RequestBody @Valid AssociadoPutRequestBody AssociadoPutRequestBody) {
+        associadoService.replace(AssociadoPutRequestBody);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping(path = "/{Id}")
     public ResponseEntity<Void> delete(@PathVariable long Id) {

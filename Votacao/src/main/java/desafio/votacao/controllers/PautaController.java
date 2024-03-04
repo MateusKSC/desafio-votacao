@@ -38,8 +38,8 @@ public class PautaController {
     }
 
     @GetMapping(path = "/find")
-    public ResponseEntity<List<Pauta>> findByName(@RequestParam String name) {
-        return ResponseEntity.ok(pautaService.findByName(name));
+    public ResponseEntity<List<Pauta>> findByNome(@RequestParam String nome) {
+        return ResponseEntity.ok(pautaService.findByNome(nome));
     }
     @GetMapping(path = "/sessao/pauta/{id}")
     public ResponseEntity<Sessao> getSessaoFromPauta(@RequestParam Long id) {
@@ -50,14 +50,14 @@ public class PautaController {
         return new ResponseEntity<>(pautaService.save(pautaPostRequestBody, cpf), HttpStatus.CREATED);
     }
     @PostMapping(path = "/processos/votacao/pauta/{id}")
-    public ResponseEntity<HttpStatus> processoDeVotacao(@RequestParam Long Id) {
-        pautaService.processoDeVotacao(Id);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<Void> prossegueComVotacao(@RequestParam Long Id) {
+        pautaService.prossegueComVotacao(Id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @PutMapping
     public ResponseEntity<Void> replace(@RequestBody @Valid PautaPutRequestBody pautaPutRequestBody) {
         pautaService.replace(pautaPutRequestBody);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/{Id}")

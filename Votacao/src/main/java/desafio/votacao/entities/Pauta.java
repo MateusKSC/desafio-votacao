@@ -21,18 +21,17 @@ import java.util.List;
 public class Pauta {
     @PrePersist
     public void criacaoDaPauta() {
-        Date date = new Date();
-        this.dataDeCriacao = date;
+        this.dataDeCriacao = new Date();
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "O nome da pauta não pode ser vazia!")
+    @NotEmpty(message = "O nome da pauta precisa ser informado!")
     private String nome;
 
-    @NotEmpty(message = "A descricao da pauta não pode ser vazia!")
+    @NotEmpty(message = "A descricao da pauta precisa ser informada!")
     private String descricao;
 
     private Date dataDeCriacao;

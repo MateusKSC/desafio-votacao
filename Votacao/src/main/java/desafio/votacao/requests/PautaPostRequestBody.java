@@ -11,10 +11,10 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class PautaPostRequestBody {
-    @NotEmpty(message = "O nome da pauta não pode ser vazia!")
+    @NotEmpty(message = "O nome da pauta precisa ser informado!")
     private String nome;
 
-    @NotEmpty(message = "A descricao da pauta não pode ser vazia!")
+    @NotEmpty(message = "A descricao da pauta precisa ser informada!")
     private String descricao;
 
 }

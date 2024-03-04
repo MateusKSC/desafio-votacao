@@ -28,20 +28,4 @@ public class Sessao {
     private Date momentoDoInicio;
     private Date momentoDoFim;
 
-    public Date getMomentoDoInicio() {
-        return momentoDoInicio;
-    }
-
-    public void setMomentoDoInicio(Date momentoDoInicio) {
-        this.momentoDoInicio = momentoDoInicio;
-    }
-
-    public Date getMomentoDoFim() {
-        return momentoDoFim;
-    }
-
-    public void setMomentoDoFim(Date momentoDoFim) {
-        this.momentoDoFim = momentoDoFim;
-    }
-
 }

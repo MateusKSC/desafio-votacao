@@ -10,7 +10,7 @@ import java.util.List;
 public interface PautaService {
     List<Pauta> listAll();
 
-    List<Pauta> findByName(String name);
+    List<Pauta> findByNome(String name);
 
     Pauta findByIdOrThrowBadRequestException(long pautaId);
     boolean verificaUnicidadeCpf(List<String> cpfAssociados);
@@ -18,8 +18,9 @@ public interface PautaService {
     void delete(long pautaId);
 
     void replace(PautaPutRequestBody pautaPutRequestBody);
-    void processoDeVotacao(Long pautaId);
+    void prossegueComVotacao(Long pautaId);
 
     Sessao getSessaoFromPauta(Long id);
+
 
 }
