@@ -1,11 +1,10 @@
 package desafio.votacao.Utils;
 
-import desafio.votacao.entities.Associado;
-import desafio.votacao.entities.Pauta;
-import desafio.votacao.requests.AssociadoPostRequestBody;
-import desafio.votacao.requests.AssociadoPutRequestBody;
+import desafio.votacao.v1.entities.Associado;
+import desafio.votacao.v1.entities.Pauta;
+import desafio.votacao.v1.requests.AssociadoPostRequestBody;
+import desafio.votacao.v1.requests.AssociadoPutRequestBody;
 
-import java.util.Collections;
 import java.util.List;
 
 public class AssociadoEntitiesBuilder {
@@ -30,6 +29,19 @@ public class AssociadoEntitiesBuilder {
                 .id(1L)
                 .nome("AssociadoTest")
                 .cpf("00002000000")
+                .build();
+    }
+    public static Associado associadoRequestBuilder(){
+        return Associado.builder()
+                .nome("Associado Teste")
+                .cpf("11111111111")
+                .build();
+    }
+    public static Associado associadoResponseBuilder(){
+        return Associado.builder()
+                .id(1L)
+                .nome("Associado Teste")
+                .cpf("11111111111")
                 .build();
     }
 }

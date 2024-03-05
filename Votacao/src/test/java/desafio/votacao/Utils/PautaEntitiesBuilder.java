@@ -1,10 +1,11 @@
 package desafio.votacao.Utils;
 
-import desafio.votacao.entities.Pauta;
-import desafio.votacao.entities.Sessao;
-import desafio.votacao.requests.PautaPostRequestBody;
-import desafio.votacao.requests.PautaPutRequestBody;
+import desafio.votacao.v1.entities.Pauta;
+import desafio.votacao.v1.entities.Sessao;
+import desafio.votacao.v1.requests.PautaPostRequestBody;
+import desafio.votacao.v1.requests.PautaPutRequestBody;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 
@@ -33,6 +34,23 @@ public class PautaEntitiesBuilder {
                 .id(1L)
                 .nome("PautaTest")
                 .descricao("PautaTesteDescricao")
+                .build();
+    }
+    public static Pauta pautaRequestBuilder(){
+        return Pauta.builder()
+                .nome("Pauta Teste")
+                .descricao("descricao")
+                .associados(Collections.emptyList())
+                .dataDeCriacao(Date.from(Instant.ofEpochSecond(1716210000)))
+                .build();
+    }
+    public static Pauta pautaResponseBuilder(){
+        return Pauta.builder()
+                .id(1L)
+                .nome("Pauta Teste")
+                .descricao("descricao")
+                .associados(Collections.emptyList())
+                .dataDeCriacao(Date.from(Instant.ofEpochSecond(1716210000)))
                 .build();
     }
 }

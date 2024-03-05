@@ -7,8 +7,10 @@ spring:
     url: jdbc:mysql://localhost:3306/Votacao?useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
     username: root
     password: root
+
   jpa:
     hibernate:
       ddl-auto: update
 some_boolean:
   value: true
+
