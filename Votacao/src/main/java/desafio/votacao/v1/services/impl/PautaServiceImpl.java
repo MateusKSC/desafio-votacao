@@ -110,8 +110,14 @@ public class PautaServiceImpl implements PautaService {
 
     public void delete(long pautaId) {
         Pauta pauta = findByIdOrThrowBadRequestException(pautaId);
-        pautaRepository.delete(pauta);
-        log.info("The given pauta was successfully deleted");
+        if(!(pauta.isSessaoIniciada())) {
+            pautaRepository.delete(pauta);
+            log.info("The given pauta was successfully deleted");
+        }
+        else{
+            throw new BadRequestException("A exclusão de uma pauta só é permitida antes do" +
+                    "seu processo de votação ter dado início!");
+        }
     }
 
     public void replace(PautaPutRequestBody pautaPutRequestBody) {
@@ -124,7 +130,7 @@ public class PautaServiceImpl implements PautaService {
         }
         else{
             throw new BadRequestException("A modificação de uma pauta só é permitida antes do" +
-                    "processo de votação ter dado início!");
+                    "seu processo de votação ter dado início!");
         }
     }
     public long calculaTempoRestante(Date agora, Date fim)

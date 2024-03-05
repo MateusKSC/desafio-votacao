@@ -63,15 +63,25 @@ public class AssociadoServiceImpl implements AssociadoService {
     }
     public void replace(AssociadoPutRequestBody associadoPutRequestBody) {
         Associado savedAssociado = findByIdOrThrowBadRequestException(associadoPutRequestBody.getId());
-        Associado associado = AssociadoMapper.INSTANCE.toAssociado(associadoPutRequestBody);
-        associado.setId(savedAssociado.getId());
-        associado.setPautas(savedAssociado.getPautas());
-        associadoRepository.save(associado);
+        if(!(doesAssociadoHavePauta(savedAssociado))) {
+            Associado associado = AssociadoMapper.INSTANCE.toAssociado(associadoPutRequestBody);
+            associado.setId(savedAssociado.getId());
+            associado.setPautas(savedAssociado.getPautas());
+            associadoRepository.save(associado);
+        }
+        else{
+            throw new BadRequestException("O associado ainda faz parte de uma pauta ativa!");
+        }
     }
     public void delete(long associadoId) {
         Associado associado = findByIdOrThrowBadRequestException(associadoId);
-        associadoRepository.delete(associado);
-        log.info("O associado foi deletado com sucesso!");
+        if(!(doesAssociadoHavePauta(associado))) {
+            associadoRepository.delete(associado);
+            log.info("O associado foi deletado com sucesso!");
+        }
+        else{
+            throw new BadRequestException("O associado ainda faz parte de uma pauta ativa!");
+        }
     }
 
     public void definirVoto(boolean voto, String cpf) {
