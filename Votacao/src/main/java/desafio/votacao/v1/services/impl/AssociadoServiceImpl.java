@@ -95,6 +95,7 @@ public class AssociadoServiceImpl implements AssociadoService {
             associadoToBeSaved.setNome(savedAssociado.getNome());
             associadoToBeSaved.setVoto(voto);
             associadoToBeSaved.setPautas(savedAssociado.getPautas());
+            associadoToBeSaved.setCpf(savedAssociado.getCpf());
             associadoRepository.save(associadoToBeSaved);
         }
         else{
