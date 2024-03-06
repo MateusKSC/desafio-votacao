@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -91,12 +92,17 @@ public class AssociadoServiceImpl implements AssociadoService {
         Associado savedAssociado = findByCpf(cpf);
         Associado associadoToBeSaved = new Associado();
         if (doesAssociadoHavePauta(savedAssociado) && didSessaoStart(savedAssociado)) {
-            associadoToBeSaved.setId(savedAssociado.getId());
-            associadoToBeSaved.setNome(savedAssociado.getNome());
-            associadoToBeSaved.setVoto(voto);
-            associadoToBeSaved.setPautas(savedAssociado.getPautas());
-            associadoToBeSaved.setCpf(savedAssociado.getCpf());
-            associadoRepository.save(associadoToBeSaved);
+            if(verificaSeSessaoEstaAberta(savedAssociado)) {
+                associadoToBeSaved.setId(savedAssociado.getId());
+                associadoToBeSaved.setNome(savedAssociado.getNome());
+                associadoToBeSaved.setVoto(voto);
+                associadoToBeSaved.setPautas(savedAssociado.getPautas());
+                associadoToBeSaved.setCpf(savedAssociado.getCpf());
+                associadoRepository.save(associadoToBeSaved);
+            }
+            else{
+                throw new BadRequestException("O periodo da sessao de voto já acabou!");
+            }
         }
         else{
             throw new BadRequestException("O associado não faz parte de nenhuma" +
@@ -153,6 +159,19 @@ public class AssociadoServiceImpl implements AssociadoService {
         }
 
         return pautaExists;
+    }
+    public boolean verificaSeSessaoEstaAberta(Associado associado){
+        Date presente = new Date();
+        boolean estaAberta;
+        if(presente.after(associado.getPautas().get(associado.getPautas()
+                .size() - 1).getSessao().getMomentoDoFim())){
+            estaAberta = false;
+        }
+        else{
+            estaAberta = true;
+        }
+        return estaAberta;
+
     }
 
     public boolean didSessaoStart(Associado associado) {

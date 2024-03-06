@@ -4,6 +4,7 @@ import desafio.votacao.Utils.AssociadoEntitiesBuilder;
 import desafio.votacao.Utils.PautaEntitiesBuilder;
 import desafio.votacao.v1.entities.Associado;
 import desafio.votacao.v1.entities.Pauta;
+import desafio.votacao.v1.entities.Sessao;
 import desafio.votacao.v1.exceptions.BadRequestException;
 import desafio.votacao.v1.repository.AssociadoRepository;
 import desafio.votacao.v1.requests.AssociadoPostRequestBody;
@@ -21,6 +22,7 @@ import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +39,7 @@ class AssociadoServiceTest {
 
     @Mock
     private AssociadoRepository associadoRepositoryMock;
+
 
 
     @BeforeEach
@@ -162,6 +165,15 @@ class AssociadoServiceTest {
     @Test
     @DisplayName("definirVoto: especifica o valor do voto do associado ao obter sucesso")
     void definirVotoSetsVotoFromAssociadoWhenSuccessful() {
+        Sessao sessao = new Sessao();
+        Pauta pauta = new Pauta();
+        Associado associado = AssociadoEntitiesBuilder.associadoBuilder();
+        sessao.setMomentoDoFim(new Date(System.currentTimeMillis() + 1899003116));
+        pauta.setSessao(sessao);
+        pauta.setSessaoIniciada(true);
+        associado.setPautas(List.of(pauta));
+        Mockito.when(associadoRepositoryMock.findByCpf(ArgumentMatchers.anyString()))
+                .thenReturn(associado);
         Assertions.assertThatCode(() -> associadoService.definirVoto(false,"00001000000"))
                 .doesNotThrowAnyException();
 
