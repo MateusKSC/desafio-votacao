@@ -45,7 +45,6 @@ O sistema foi desenvolvido utilizando as tecnologias abaixo:
 | Cobertura de Testes | Maven  |
 | Conversão de entidades | MapStruct  |
 | Testes de Integração | MockMvc  |
-| Qualidade | Sonar  |
 
 ## Pré-Requisitos
 
