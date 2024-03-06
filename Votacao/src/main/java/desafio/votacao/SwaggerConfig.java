@@ -26,7 +26,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     private ApiInfo apiInfoMetaData() {
 
         return new ApiInfoBuilder().title("Desafio de Votacao")
-                .description("Vote em pautas e verifique o resultado das sessões de votacao!")
+                .description("Vote em pautas e verifique o resultado das sessões de votação!")
                 .contact(new Contact("Mateus Scheuermann", null,"mateus.k.s@hotmail.com"))
                 .license("Apache 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")

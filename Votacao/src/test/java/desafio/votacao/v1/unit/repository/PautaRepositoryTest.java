@@ -76,6 +76,8 @@ class PautaRepositoryTest {
     @DisplayName("findByNome: retorna uma lista de Associados ao obter sucesso na procura por nome")
     public void findPautaByNameWhenSuccessful(){
         Pauta pauta = pautaBuilder();
+        pauta.setSessao(null);
+        pauta.setAssociados(null);
         Pauta savedPauta = pautaRepository.save(pauta);
         List<Pauta> pautas = pautaRepository.findByNome(pauta.getNome());
 
@@ -87,6 +89,8 @@ class PautaRepositoryTest {
     @DisplayName("findByNome: retorna uma lista vazia ao não encontrar Associados por nome")
     public void failsToFindPautaByName(){
         Pauta pauta = pautaBuilder();
+        pauta.setSessao(null);
+        pauta.setAssociados(null);
         pautaRepository.save(pauta);
         List<Pauta> pautas = pautaRepository.findByNome("Different_Name");
 

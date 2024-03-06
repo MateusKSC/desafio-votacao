@@ -1,7 +1,9 @@
 package desafio.votacao.v1.unit.services;
 
 import desafio.votacao.Utils.AssociadoEntitiesBuilder;
+import desafio.votacao.Utils.PautaEntitiesBuilder;
 import desafio.votacao.v1.entities.Associado;
+import desafio.votacao.v1.entities.Pauta;
 import desafio.votacao.v1.exceptions.BadRequestException;
 import desafio.votacao.v1.repository.AssociadoRepository;
 import desafio.votacao.v1.requests.AssociadoPostRequestBody;
@@ -131,6 +133,12 @@ class AssociadoServiceTest {
     @Test
     @DisplayName("replace: atualiza um associado ao obter sucesso")
     void replaceUpdatesAssociadoWhenSuccessful() {
+        Associado associado = AssociadoEntitiesBuilder.associadoBuilder();
+        Pauta pauta = PautaEntitiesBuilder.pautaBuilder();
+        pauta.setConcluida(true);
+        associado.setPautas(List.of(pauta));
+        Mockito.when(associadoRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(associado));
         Assertions.assertThatCode(() -> associadoService.replace(AssociadoEntitiesBuilder.associadoPutRequestBodyBuilder()))
                 .doesNotThrowAnyException();
     }
@@ -138,7 +146,12 @@ class AssociadoServiceTest {
     @Test
     @DisplayName("delete: remove um associado ao obter sucesso")
     void deleteRemovesAssociadoWhenSuccessful() {
-
+        Associado associado = AssociadoEntitiesBuilder.associadoBuilder();
+        Pauta pauta = PautaEntitiesBuilder.pautaBuilder();
+        pauta.setConcluida(true);
+        associado.setPautas(List.of(pauta));
+        Mockito.when(associadoRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(associado));
         Assertions.assertThatCode(() -> associadoService.delete(1))
                 .doesNotThrowAnyException();
 

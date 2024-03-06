@@ -159,23 +159,23 @@ class PautaServiceTest {
                 .isNotNull();
     }
     @Test
-    @DisplayName("prossegueComVotacao: Começa o processo de votacao ao obter sucesso")
-    void prossegueComVotacaoInicio() {
+    @DisplayName("prossegueComVotacaoTempoPadrao: Começa o processo de votacao ao obter sucesso")
+    void prossegueComVotacaoTempoPadraoInicio() {
         Pauta pauta = PautaEntitiesBuilder.pautaBuilder();
         pauta.setSessaoIniciada(false);
 
         Mockito.when(pautaRepositoryMock.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(pauta));
 
-        Assertions.assertThatCode(() -> pautaService.prossegueComVotacao(1L))
+        Assertions.assertThatCode(() -> pautaService.prossegueComVotacaoTempoPadrao(1L))
                 .doesNotThrowAnyException();
 
     }
     @Test
-    @DisplayName("prossegueComVotacao: Tenta dar seguimento no processo de votacao, mas" +
-            "falha e lança BadRequestException, pois o período da sessao de votacao ainda " +
+    @DisplayName("prossegueComVotacaoTempoPadrao: Tenta dar seguimento no processo de votação, mas" +
+            "falha e lança BadRequestException, pois o período da sessão de votação ainda " +
             "não acabou")
-    void prossegueComVotacaoLançaBadRequestException() {
+    void prossegueComVotacaoTempoPadraoLancaBadRequestException() {
         Pauta pauta = PautaEntitiesBuilder.pautaBuilder();
         pauta.setSessaoIniciada(true);
 
@@ -183,11 +183,11 @@ class PautaServiceTest {
                 .thenReturn(Optional.of(pauta));
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> pautaService.prossegueComVotacao(1L));
+                .isThrownBy(() -> pautaService.prossegueComVotacaoTempoPadrao(1L));
     }
     @Test
-    @DisplayName("prossegueComVotacao: Termina o processo de votacao ao obter sucesso")
-    void prossegueComVotacaoFim() {
+    @DisplayName("prossegueComVotacaoTempoPadrao: Termina o processo de votacao ao obter sucesso")
+    void prossegueComVotacaoTempoPadraoFim() {
         Pauta pauta = PautaEntitiesBuilder.pautaBuilder();
         pauta.setSessaoIniciada(true);
         pauta.getSessao().setMomentoDoFim(new Date(System.currentTimeMillis() - 6000000));
@@ -195,7 +195,48 @@ class PautaServiceTest {
         Mockito.when(pautaRepositoryMock.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(pauta));
 
-        Assertions.assertThatCode(() -> pautaService.prossegueComVotacao(1L))
+        Assertions.assertThatCode(() -> pautaService.prossegueComVotacaoTempoPadrao(1L))
+                .doesNotThrowAnyException();
+
+    }
+    @Test
+    @DisplayName("prossegueComVotacaoTempoDefinido: Começa o processo de votacao ao obter sucesso")
+    void prossegueComVotacaoTempoDefinidoInicio() {
+        Pauta pauta = PautaEntitiesBuilder.pautaBuilder();
+        pauta.setSessaoIniciada(false);
+
+        Mockito.when(pautaRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(pauta));
+
+        Assertions.assertThatCode(() -> pautaService.prossegueComVotacaoTempoDefinido(1L,1))
+                .doesNotThrowAnyException();
+
+    }
+    @Test
+    @DisplayName("prossegueComVotacaoTempoDefinido: Tenta dar seguimento no processo de votação, mas" +
+            "falha e lança BadRequestException, pois o período da sessão de votação ainda " +
+            "não acabou")
+    void prossegueComVotacaoTempoDefinidoLancaBadRequestException() {
+        Pauta pauta = PautaEntitiesBuilder.pautaBuilder();
+        pauta.setSessaoIniciada(true);
+
+        Mockito.when(pautaRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(pauta));
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> pautaService.prossegueComVotacaoTempoDefinido(1L,2));
+    }
+    @Test
+    @DisplayName("prossegueComVotacaoTempoDefinido: Termina o processo de votacao ao obter sucesso")
+    void prossegueComVotacaoTempoDefinidoFim() {
+        Pauta pauta = PautaEntitiesBuilder.pautaBuilder();
+        pauta.setSessaoIniciada(true);
+        pauta.getSessao().setMomentoDoFim(new Date(System.currentTimeMillis() - 6000000));
+
+        Mockito.when(pautaRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(pauta));
+
+        Assertions.assertThatCode(() -> pautaService.prossegueComVotacaoTempoDefinido(1L,2))
                 .doesNotThrowAnyException();
 
     }

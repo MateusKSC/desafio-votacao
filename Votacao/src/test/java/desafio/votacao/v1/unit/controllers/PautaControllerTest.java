@@ -55,7 +55,9 @@ class PautaControllerTest {
         Mockito.when(pautaServiceMock.getSessaoFromPauta(ArgumentMatchers.anyLong()))
                 .thenReturn(new Sessao());
 
-        Mockito.doNothing().when(pautaServiceMock).prossegueComVotacao(ArgumentMatchers.anyLong());
+        Mockito.doNothing().when(pautaServiceMock).prossegueComVotacaoTempoPadrao(ArgumentMatchers.anyLong());
+
+        Mockito .doNothing().when(pautaServiceMock).prossegueComVotacaoTempoDefinido(ArgumentMatchers.anyLong(),ArgumentMatchers.anyInt());
 
         Mockito.doNothing().when(pautaServiceMock).delete(ArgumentMatchers.anyLong());
 
@@ -152,12 +154,14 @@ class PautaControllerTest {
         Mockito.when(pautaServiceMock.save(ArgumentMatchers.any(PautaPostRequestBody.class),
                         eq(strings)))
                 .thenReturn(PautaEntitiesBuilder.pautaBuilder());
-
         Pauta pauta = pautaController.save(
                 PautaEntitiesBuilder.pautaPostRequestBodyBuilder(),strings).getBody();
 
-        Assertions.assertThat(pauta).isNotNull().isEqualTo(PautaEntitiesBuilder.pautaBuilder());
-
+        Assertions.assertThat(pauta).isNotNull();
+        Assertions.assertThat(pauta.getId()).isEqualTo(PautaEntitiesBuilder.pautaBuilder().getId());
+        Assertions.assertThat(pauta.getNome()).isEqualTo(PautaEntitiesBuilder.pautaBuilder().getNome());
+        Assertions.assertThat(pauta.getDescricao()).isEqualTo(PautaEntitiesBuilder.pautaBuilder().getDescricao());
+        Assertions.assertThat(pauta.getDataDeCriacao()).isEqualTo(PautaEntitiesBuilder.pautaBuilder().getDataDeCriacao());
     }
     @Test
     @DisplayName("replace: Atualiza um pauta ao obter sucesso")
@@ -173,13 +177,26 @@ class PautaControllerTest {
         Assertions.assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
     @Test
-    @DisplayName("prossegueComVotacao: gerencia e avança o processo de votacao quando obtém sucesso")
-    void prossegueComVotacaoManagesVotacaoProcessWhenSuccessful() {
+    @DisplayName("prossegueComVotacaoTempoPadrao: gerencia e avança o processo de votacao quando obtém sucesso")
+    void prossegueComVotacaoTempoPadraoManagesVotacaoProcessWhenSuccessful() {
 
-        Assertions.assertThatCode(() -> pautaController.prossegueComVotacao(1L))
+        Assertions.assertThatCode(() -> pautaController.prossegueComVotacaoTempoPadrao(1L))
                 .doesNotThrowAnyException();
 
-        ResponseEntity<Void> entity = pautaController.prossegueComVotacao(1L);
+        ResponseEntity<Void> entity = pautaController.prossegueComVotacaoTempoPadrao(1L);
+
+        Assertions.assertThat(entity).isNotNull();
+
+        Assertions.assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+    @Test
+    @DisplayName("prossegueComVotacaoTempoDefinido: gerencia e avança o processo de votacao quando obtém sucesso")
+    void prossegueComVotacaoTempoDefinidoManagesVotacaoProcessWhenSuccessful() {
+
+        Assertions.assertThatCode(() -> pautaController.prossegueComVotacaoTempoDefinido(1L,2))
+                .doesNotThrowAnyException();
+
+        ResponseEntity<Void> entity = pautaController.prossegueComVotacaoTempoDefinido(1L,2);
 
         Assertions.assertThat(entity).isNotNull();
 

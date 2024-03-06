@@ -12,13 +12,14 @@ public interface PautaService {
 
     List<Pauta> findByNome(String name);
 
-    Pauta findByIdOrThrowBadRequestException(long pautaId);
+    Pauta findByIdOrThrowBadRequestException(long id);
     boolean verificaUnicidadeCpf(List<String> cpfAssociados);
     Pauta save(PautaPostRequestBody pautaPostRequestBody, List<String> cpfAssociados);
-    void delete(long pautaId);
+    void delete(long id);
 
     void replace(PautaPutRequestBody pautaPutRequestBody);
-    void prossegueComVotacao(Long pautaId);
+    void prossegueComVotacaoTempoPadrao(Long id);
+    void prossegueComVotacaoTempoDefinido(Long id, int tempo);
 
     Sessao getSessaoFromPauta(Long id);
 

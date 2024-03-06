@@ -108,8 +108,8 @@ public class PautaServiceImpl implements PautaService {
         return (savedPauta);
     }
 
-    public void delete(long pautaId) {
-        Pauta pauta = findByIdOrThrowBadRequestException(pautaId);
+    public void delete(long id) {
+        Pauta pauta = findByIdOrThrowBadRequestException(id);
         if(!(pauta.isSessaoIniciada())) {
             pautaRepository.delete(pauta);
             log.info("The given pauta was successfully deleted");
@@ -138,9 +138,9 @@ public class PautaServiceImpl implements PautaService {
         long diffInMs = Math.abs(fim.getTime() - agora.getTime());
         return TimeUnit.SECONDS.convert(diffInMs, TimeUnit.MILLISECONDS);
     }
-    public void prossegueComVotacao(Long pautaId) {
+    public void prossegueComVotacaoTempoDefinido(Long id, int tempo) {
         Date presente = new Date();
-        Pauta pauta = findByIdOrThrowBadRequestException(pautaId);
+        Pauta pauta = findByIdOrThrowBadRequestException(id);
         List<Associado> associados = pauta.getAssociados();
         if (pauta.isSessaoIniciada()) {
             if (!(pauta.isConcluida())) {
@@ -163,6 +163,45 @@ public class PautaServiceImpl implements PautaService {
             }
         } else {
             Sessao sessao = new Sessao();
+            if(tempo > 0) {
+                sessao.setDuracao(tempo);
+            }
+            else{
+                throw new BadRequestException("O tempo de sessão definido precisa ser maior" +
+                        "que zero!");
+            }
+            pauta.setSessao(sessao);
+            pauta.setSessaoIniciada(true);
+            sessaoService.save(sessao);
+            pautaRepository.save(pauta);
+        }
+    }
+    public void prossegueComVotacaoTempoPadrao(Long id) {
+        Date presente = new Date();
+        Pauta pauta = findByIdOrThrowBadRequestException(id);
+        List<Associado> associados = pauta.getAssociados();
+        if (pauta.isSessaoIniciada()) {
+            if (!(pauta.isConcluida())) {
+                if (presente.after(pauta.getSessao().getMomentoDoFim())) {
+                    for (Associado associado : associados) {
+                        pauta.incrementaVotos(associado.isVoto());
+                    }
+                    pauta.verificaResultadoVotacao();
+                    associadoService.resetaVoto();
+                    pauta.setConcluida(true);
+                    pautaRepository.save(pauta);
+                } else {
+                    throw new BadRequestException("O tempo para votação ainda não acabou" +
+                            " (restam " + calculaTempoRestante(presente, pauta.getSessao().getMomentoDoFim())
+                            + " segundos)!");
+                }
+            } else {
+                throw new BadRequestException("A pauta informada já teve sua votação " +
+                        "finalizada.");
+            }
+        } else {
+            Sessao sessao = new Sessao();
+            sessao.setDuracao(1);
             pauta.setSessao(sessao);
             pauta.setSessaoIniciada(true);
             sessaoService.save(sessao);

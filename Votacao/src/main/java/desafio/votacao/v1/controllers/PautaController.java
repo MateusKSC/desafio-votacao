@@ -50,8 +50,13 @@ public class PautaController {
         return new ResponseEntity<>(pautaService.save(pautaPostRequestBody, cpf), HttpStatus.CREATED);
     }
     @PostMapping(path = "/processos/votacao/pauta/{id}")
-    public ResponseEntity<Void> prossegueComVotacao(@RequestParam Long Id) {
-        pautaService.prossegueComVotacao(Id);
+    public ResponseEntity<Void> prossegueComVotacaoTempoPadrao(@RequestParam Long id) {
+        pautaService.prossegueComVotacaoTempoPadrao(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PostMapping(path = "/processos/votacao/pauta/{id}/sessao/minutos/{tempo}")
+    public ResponseEntity<Void> prossegueComVotacaoTempoDefinido(@RequestParam Long id, @RequestParam int tempo) {
+        pautaService.prossegueComVotacaoTempoDefinido(id,tempo);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PutMapping
