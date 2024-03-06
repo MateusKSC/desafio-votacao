@@ -27,6 +27,9 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 
+/**
+ * Classe de testes que verificam o funcionamento do controller da Pauta
+ */
 @ExtendWith(SpringExtension.class)
 class PautaControllerTest {
     @InjectMocks

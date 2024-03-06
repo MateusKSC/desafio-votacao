@@ -21,7 +21,9 @@ import java.util.Date;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+/**
+ * Classe de testes de integração que verificam o funcionamento da comunicação pelo controller da Sessao
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Sessao Controller")

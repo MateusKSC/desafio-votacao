@@ -7,6 +7,9 @@ import desafio.votacao.v1.requests.AssociadoPutRequestBody;
 
 import java.util.List;
 
+/**
+ * Classe "factory" de stubs para os testes do Associado
+ */
 public class AssociadoEntitiesBuilder {
     public static Associado associadoBuilder(){
         Pauta pauta = new Pauta();

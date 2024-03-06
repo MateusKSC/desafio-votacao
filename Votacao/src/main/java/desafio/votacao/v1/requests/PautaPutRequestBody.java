@@ -5,6 +5,9 @@ import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Request Body para put específico da Pauta
+ */
 @Getter
 @Setter
 @NoArgsConstructor

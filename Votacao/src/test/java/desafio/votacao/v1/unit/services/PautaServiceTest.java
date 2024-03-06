@@ -26,6 +26,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Classe de testes que verificam o funcionamento do service da Pauta
+ */
 @ExtendWith(SpringExtension.class)
 class PautaServiceTest {
 

@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
-
+/**
+ * Classe de controller da Pauta
+ */
 @RestController
 @RequestMapping("v1/pautas")
 @Log4j2

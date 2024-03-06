@@ -18,6 +18,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Classe de testes que verificam o funcionamento do service da Sessao
+ */
 @ExtendWith(SpringExtension.class)
 class SessaoServiceTest {
     @InjectMocks

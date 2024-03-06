@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Interface de Jpa Repository específica do Associado
+ */
 @Repository
 public interface AssociadoRepository extends JpaRepository<Associado, Long> {
    List<Associado> findByNome(String nome);

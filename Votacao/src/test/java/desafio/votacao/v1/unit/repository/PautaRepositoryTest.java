@@ -14,6 +14,9 @@ import java.util.Optional;
 
 import static desafio.votacao.Utils.PautaEntitiesBuilder.pautaBuilder;
 
+/**
+ * Classe de testes que verificam o funcionamento do repository da Pauta
+ */
 @DataJpaTest
 @DisplayName("Testes para Pauta Repository")
 class PautaRepositoryTest {

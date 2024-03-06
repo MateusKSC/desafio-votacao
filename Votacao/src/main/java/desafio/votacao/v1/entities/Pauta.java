@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Entidade Pauta responsável por gerir as sessoes de voto nas quais Associados participam
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

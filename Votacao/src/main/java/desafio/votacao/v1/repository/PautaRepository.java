@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Interface de Jpa Repository específica da Pauta
+ */
 @Repository
 public interface PautaRepository extends JpaRepository<Pauta, Long> {
 

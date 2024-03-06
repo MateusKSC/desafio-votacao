@@ -14,6 +14,9 @@ import java.util.Optional;
 
 import static desafio.votacao.Utils.AssociadoEntitiesBuilder.associadoBuilder;
 
+/**
+ * Classe de testes que verificam o funcionamento do repository do Associado
+ */
 @DataJpaTest
 @DisplayName("Testes para Associado Repository")
 class AssociadoRepositoryTest {

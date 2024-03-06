@@ -2,6 +2,8 @@ package desafio.votacao.v1.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +15,9 @@ import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entidade Associado que é cadastrado para participar de pautas e sessoes de voto
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

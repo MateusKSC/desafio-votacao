@@ -24,6 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Classe de testes que verificam o funcionamento do service do Associado
+ */
 @ExtendWith(SpringExtension.class)
 class AssociadoServiceTest {
 

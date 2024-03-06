@@ -10,7 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
-
+/**
+ * Classe de testes que verificam o funcionamento do repository da Sessao
+ */
 @DataJpaTest
 @DisplayName("Testes for Sessao Repository")
 class SessaoRepositoryTest {

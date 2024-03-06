@@ -6,6 +6,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+/**
+ * Request Body para put específico do Associado
+ */
 @Getter
 @Setter
 @NoArgsConstructor

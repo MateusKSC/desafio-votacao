@@ -5,6 +5,9 @@ import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
+/**
+ * Request Body para post específico do Associado
+ */
 @Data
 @Getter
 @Setter

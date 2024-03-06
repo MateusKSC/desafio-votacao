@@ -18,6 +18,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+/**
+ * Classe de testes que verificam o funcionamento do controller da Sessao
+ */
 @ExtendWith(SpringExtension.class)
 class SessaoControllerTest {
     @InjectMocks

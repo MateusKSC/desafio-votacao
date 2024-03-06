@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Classe de controller da Sessao
+ */
 @RestController
 @RequestMapping("v1/sessoes")
 @Log4j2

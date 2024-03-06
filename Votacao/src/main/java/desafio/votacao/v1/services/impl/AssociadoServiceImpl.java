@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
+/**
+ * Implementação das funções de Serviço do Associado
+ */
 @Service
 @RequiredArgsConstructor
 @Log4j2

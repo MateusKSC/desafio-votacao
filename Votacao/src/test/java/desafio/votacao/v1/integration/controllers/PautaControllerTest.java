@@ -22,7 +22,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+/**
+ * Classe de testes de integração que verificam o funcionamento da comunicação pelo controller da Pauta
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Pauta Controller")

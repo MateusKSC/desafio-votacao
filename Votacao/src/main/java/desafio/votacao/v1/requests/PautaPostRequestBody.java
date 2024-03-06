@@ -4,6 +4,9 @@ import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 
+/**
+ * Request Body para post específico da Pauta
+ */
 @Data
 @Getter
 @Setter

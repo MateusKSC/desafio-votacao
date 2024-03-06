@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementação das funções de Serviço da Sessao
+ */
 @Service
 @RequiredArgsConstructor
 @Log4j2

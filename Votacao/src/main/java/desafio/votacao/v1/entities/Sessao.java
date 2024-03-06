@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * Entidade Sessao responsável por representar o período do processo de votação
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

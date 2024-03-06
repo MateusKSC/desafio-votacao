@@ -5,6 +5,8 @@ import desafio.votacao.v1.requests.AssociadoPostRequestBody;
 import desafio.votacao.v1.requests.AssociadoPutRequestBody;
 import desafio.votacao.v1.services.AssociadoService;
 import desafio.votacao.v1.utilities.DateUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,9 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Classe de controller do Associado
+ */
 @RestController
 @RequestMapping("v1/associados")
 @Log4j2

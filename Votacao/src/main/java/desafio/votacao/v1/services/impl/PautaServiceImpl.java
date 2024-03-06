@@ -21,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Implementação das funções de Serviço da Pauta
+ */
 @Service
 @RequiredArgsConstructor
 @Log4j2

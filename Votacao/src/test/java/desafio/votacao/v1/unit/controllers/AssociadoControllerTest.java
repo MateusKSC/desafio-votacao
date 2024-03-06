@@ -23,6 +23,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Classe de testes que verificam o funcionamento do controller do Associado
+ */
 @ExtendWith(SpringExtension.class)
 class AssociadoControllerTest {
     @InjectMocks

@@ -9,6 +9,9 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 
+/**
+ * Classe "factory" de stubs para os testes da Pauta
+ */
 public class PautaEntitiesBuilder {
     public static Pauta pautaBuilder(){
         Sessao sessao = Sessao.builder()
