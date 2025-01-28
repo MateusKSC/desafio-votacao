@@ -22,7 +22,6 @@ jobs:
 
       - name: Build with Maven
         run: |
-          mvn clean 
           mvn -B package --file Votacao/pom.xml
       - name: Run Unit Tests
         run: |
