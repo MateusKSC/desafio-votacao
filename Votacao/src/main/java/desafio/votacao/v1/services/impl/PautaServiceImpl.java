@@ -5,6 +5,7 @@ import desafio.votacao.v1.entities.Pauta;
 import desafio.votacao.v1.entities.Sessao;
 import desafio.votacao.v1.exceptions.BadRequestException;
 import desafio.votacao.v1.mapper.PautaMapper;
+import desafio.votacao.v1.repository.AssociadoRepository;
 import desafio.votacao.v1.repository.PautaRepository;
 import desafio.votacao.v1.requests.PautaPostRequestBody;
 import desafio.votacao.v1.requests.PautaPutRequestBody;
@@ -30,6 +31,9 @@ import java.util.concurrent.TimeUnit;
 public class PautaServiceImpl implements PautaService {
     @Autowired
     private final PautaRepository pautaRepository;
+
+    @Autowired
+    private final AssociadoRepository associadoRepository;
 
     private final AssociadoServiceImpl associadoService;
 
@@ -86,11 +90,11 @@ public class PautaServiceImpl implements PautaService {
         pauta.setNome(pautaPostRequestBody.getNome());
         pauta.setDescricao(pautaPostRequestBody.getDescricao());
         for (String cpfAssociado : cpfAssociados) {
-            if (associadoService.findByCpf(cpfAssociado) != null && (verificaUnicidadeCpf(cpfAssociados))) {
-                if (!(associadoService.doesAssociadoHavePauta(
-                        associadoService.findByCpf(cpfAssociado)))) {
+            if (associadoService.encontrarPeloCpf(cpfAssociado) != null && (verificaUnicidadeCpf(cpfAssociados))) {
+                if (!(associadoService.verificaSeAssociadoPossuiPautaAberta(
+                        associadoService.encontrarPeloCpf(cpfAssociado)))) {
                     ultimoAssociado = cpfAssociado;
-                    associados.add(associadoService.findByCpf(cpfAssociado));
+                    associados.add(associadoService.encontrarPeloCpf(cpfAssociado));
                 } else {
                     throw new BadRequestException("O associado informado já possui uma pauta" +
                             " ativa no momento!");
@@ -190,7 +194,7 @@ public class PautaServiceImpl implements PautaService {
                         pauta.incrementaVotos(associado.isVoto());
                     }
                     pauta.verificaResultadoVotacao();
-                    associadoService.resetaVoto();
+                    resetaVoto(associados);
                     pauta.setConcluida(true);
                     pautaRepository.save(pauta);
                 } else {
@@ -210,6 +214,12 @@ public class PautaServiceImpl implements PautaService {
             sessaoService.save(sessao);
             pautaRepository.save(pauta);
         }
+    }
+    public void resetaVoto(List<Associado> associados) {
+        associados.forEach(associado -> {
+            associado.setVoto(true);
+            associadoRepository.save(associado);
+        });
     }
 
 }

@@ -3,6 +3,7 @@ package desafio.votacao.v1.services;
 import desafio.votacao.v1.entities.Associado;
 import desafio.votacao.v1.requests.AssociadoPostRequestBody;
 import desafio.votacao.v1.requests.AssociadoPutRequestBody;
+import desafio.votacao.v1.requests.AssociadoVotoDTO;
 
 import java.util.List;
 
@@ -19,17 +20,17 @@ public interface AssociadoService {
     /**
      * Encontra um Associado pelo nome
      */
-    List<Associado> findByNome(String name);
+    List<Associado> encontrarPeloNome(String name);
 
     /**
      * Encontra um Associado pelo cpf
      */
-    Associado findByCpf(String cpf);
+    Associado encontrarPeloCpf(String cpf);
 
     /**
      * Encontra um Associado pelo id
      */
-    Associado findByIdOrThrowBadRequestException(long id);
+    Associado encontrarPeloId(long id);
 
     /**
      * Salva um Associado do Banco
@@ -44,22 +45,10 @@ public interface AssociadoService {
     /**
      * Define o voto do Associado
      */
-    void definirVoto(boolean voto, String cpf);
 
-    /**
-     * Reseta o valor das variáveis relativas ao voto
-     */
+   void definirVoto(AssociadoVotoDTO associadoVotoDTO);
+
     void resetaVoto();
-
-    /**
-     * Verifica se um cpf de um associado já está cadastrado
-     */
-    boolean isCpfUnique(String cpf, Associado associadoEmValidacao, String requestMethod);
-
-    /**
-     * Verifica se um associado está cadasstrado em uma pauta com votação em andamento.
-     */
-    boolean doesAssociadoHavePauta(Associado associado);
 
     /**
      * Substitui as informações de um associado

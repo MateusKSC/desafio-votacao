@@ -34,8 +34,6 @@ class AssociadoServiceTest {
 
     @InjectMocks
     private AssociadoServiceImpl associadoService;
-    @Mock
-    private DateUtil dateUtil;
 
     @Mock
     private AssociadoRepository associadoRepositoryMock;
@@ -83,7 +81,7 @@ class AssociadoServiceTest {
     void findByIdOrThrowBadRequestExceptionReturnsAssociadoWhenSuccessful() {
         Long expectedId = AssociadoEntitiesBuilder.associadoBuilder().getId();
 
-        Associado associado = associadoService.findByIdOrThrowBadRequestException(AssociadoEntitiesBuilder.associadoBuilder().getId());
+        Associado associado = associadoService.encontrarPeloId(AssociadoEntitiesBuilder.associadoBuilder().getId());
 
         Assertions.assertThat(associado).isNotNull();
 
@@ -95,7 +93,7 @@ class AssociadoServiceTest {
     void findByNameReturnsListOfAssociadoWhenSuccessful() {
         String expectedName = AssociadoEntitiesBuilder.associadoBuilder().getNome();
 
-        List<Associado> associados = associadoService.findByNome("associado");
+        List<Associado> associados = associadoService.encontrarPeloNome("associado");
 
         Assertions.assertThat(associados)
                 .isNotNull()
@@ -111,7 +109,7 @@ class AssociadoServiceTest {
         Mockito.when(associadoRepositoryMock.findByNome(ArgumentMatchers.anyString()))
                 .thenReturn(Collections.emptyList());
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> associadoService.findByNome("associado"))
+                .isThrownBy(() -> associadoService.encontrarPeloNome("associado"))
                 .withMessageContaining("Associado não encontrado!");
     }
 
@@ -159,22 +157,6 @@ class AssociadoServiceTest {
         Mockito.when(associadoRepositoryMock.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(associado));
         Assertions.assertThatCode(() -> associadoService.delete(1))
-                .doesNotThrowAnyException();
-
-    }
-    @Test
-    @DisplayName("definirVoto: especifica o valor do voto do associado ao obter sucesso")
-    void definirVotoSetsVotoFromAssociadoWhenSuccessful() {
-        Sessao sessao = new Sessao();
-        Pauta pauta = new Pauta();
-        Associado associado = AssociadoEntitiesBuilder.associadoBuilder();
-        sessao.setMomentoDoFim(new Date(System.currentTimeMillis() + 1899003116));
-        pauta.setSessao(sessao);
-        pauta.setSessaoIniciada(true);
-        associado.setPautas(List.of(pauta));
-        Mockito.when(associadoRepositoryMock.findByCpf(ArgumentMatchers.anyString()))
-                .thenReturn(associado);
-        Assertions.assertThatCode(() -> associadoService.definirVoto(false,"00001000000"))
                 .doesNotThrowAnyException();
 
     }

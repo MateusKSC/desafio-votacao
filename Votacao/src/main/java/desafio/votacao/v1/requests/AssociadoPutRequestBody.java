@@ -15,7 +15,7 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @Builder
 public class AssociadoPutRequestBody {
-    @NotNull(message = "O id da pauta precisa ser informado!")
+    @NotNull(message = "O id do associado precisa ser informado!")
     private Long id;
 
     @NotEmpty(message = "O nome do associado precisa ser informado!")

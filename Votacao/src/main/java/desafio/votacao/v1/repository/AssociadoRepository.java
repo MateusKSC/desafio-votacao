@@ -13,5 +13,6 @@ import java.util.List;
 public interface AssociadoRepository extends JpaRepository<Associado, Long> {
    List<Associado> findByNome(String nome);
    Associado findByCpf(String cpf);
+   List<Associado> findAllByCpf(String cpf);
 
 }

@@ -10,5 +10,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-some_boolean:
-  value: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: 123456

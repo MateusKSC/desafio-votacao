@@ -40,6 +40,10 @@ public class Associado {
     @Builder.Default
     private boolean voto = true;
 
+    public Long getId() {
+        return id;
+    }
+
     @ManyToMany(mappedBy = "associados")
     @JsonIgnore
     private List<Pauta> pautas = new ArrayList<>();

@@ -1,11 +1,13 @@
 package desafio.votacao.v1.services.impl;
 
 import desafio.votacao.v1.entities.Associado;
+import desafio.votacao.v1.entities.Pauta;
 import desafio.votacao.v1.exceptions.BadRequestException;
 import desafio.votacao.v1.mapper.AssociadoMapper;
 import desafio.votacao.v1.repository.AssociadoRepository;
 import desafio.votacao.v1.requests.AssociadoPostRequestBody;
 import desafio.votacao.v1.requests.AssociadoPutRequestBody;
+import desafio.votacao.v1.requests.AssociadoVotoDTO;
 import desafio.votacao.v1.services.AssociadoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,28 +31,32 @@ public class AssociadoServiceImpl implements AssociadoService {
         return associadoRepository.findAll();
     }
 
-    public List<Associado> findByNome(String name) {
+    public List<Associado> encontrarPeloNome(String name) {
         List<Associado> associados = associadoRepository.findByNome(name);
+        verificaNomeInexistente(associados);
+        return associados;
+    }
+    private void verificaNomeInexistente(List<Associado> associados){
         if (associados.isEmpty()) {
             throw new BadRequestException("Associado não encontrado!");
         }
-        return associados;
     }
 
-    public Associado findByCpf(String cpf) {
+    public Associado encontrarPeloCpf(String cpf) {
         Associado associado = associadoRepository.findByCpf(cpf);
-
-        if (associado == null) {
-            if (cpf.isEmpty()) {
-                throw new BadRequestException("O campo do CPF do associado não pode estar vazio.");
-            } else {
-                throw new BadRequestException("Associado de cpf " + cpf + " não encontrado!");
-            }
-        }
+        verificaSeCpfEstaVazio(cpf);
+        verificaCpfInexistente(associado,cpf);
         return associado;
     }
 
-    public Associado findByIdOrThrowBadRequestException(long associadoId) {
+    private void verificaSeCpfEstaVazio(String cpf){
+        if (cpf.isEmpty()) throw new BadRequestException("O campo do CPF do associado não pode estar vazio!");
+    }
+    private void verificaCpfInexistente(Associado associado, String cpf){
+        if (associado == null) throw new BadRequestException("Associado de cpf " + cpf + " não encontrado!");
+    }
+
+    public Associado encontrarPeloId(long associadoId) {
         return associadoRepository.findById(associadoId)
                 .orElseThrow(() -> new BadRequestException("Associado não encontrado!"));
     }
@@ -59,57 +65,91 @@ public class AssociadoServiceImpl implements AssociadoService {
     public Associado save(AssociadoPostRequestBody associadoPostRequestBody) {
         Associado associado = AssociadoMapper.INSTANCE.toAssociado(associadoPostRequestBody);
         Associado savedAssociado = new Associado();
-        if (isCpfUnique(associadoPostRequestBody.getCpf(), associado, "save")) {
+        if (verificaUnicidadeDoCpfAoCriarAssociado(associadoPostRequestBody.getCpf())) {
             savedAssociado = associadoRepository.save(associado);
-            log.info("Associado salvo com sucesso!");
+            log.info("O associado foi salvo com sucesso!");
         }
         return savedAssociado;
     }
+
     public void replace(AssociadoPutRequestBody associadoPutRequestBody) {
-        Associado savedAssociado = findByIdOrThrowBadRequestException(associadoPutRequestBody.getId());
-        if(!(doesAssociadoHavePauta(savedAssociado))) {
+        Associado savedAssociado = encontrarPeloId(associadoPutRequestBody.getId());
+        if (!(verificaSeAssociadoPossuiPautaAberta(savedAssociado))) {
+            verificaUnicidadeDoCpfAoAlterarAssociadoExistente(savedAssociado.getCpf(), savedAssociado.getId());
             Associado associado = AssociadoMapper.INSTANCE.toAssociado(associadoPutRequestBody);
             associado.setId(savedAssociado.getId());
             associado.setPautas(savedAssociado.getPautas());
             associadoRepository.save(associado);
-        }
-        else{
-            throw new BadRequestException("O associado ainda faz parte de uma pauta ativa!");
+            log.info("O associado foi atualizado com sucesso!");
         }
     }
+
     public void delete(long associadoId) {
-        Associado associado = findByIdOrThrowBadRequestException(associadoId);
-        if(!(doesAssociadoHavePauta(associado))) {
+        Associado associado = encontrarPeloId(associadoId);
+        if (!(verificaSeAssociadoPossuiPautaAberta(associado))) {
             associadoRepository.delete(associado);
             log.info("O associado foi deletado com sucesso!");
         }
-        else{
-            throw new BadRequestException("O associado ainda faz parte de uma pauta ativa!");
+    }
+
+    public void definirVoto(AssociadoVotoDTO associadoVotoDTO) {
+        Associado associadoSalvo = encontrarPeloId(associadoVotoDTO.getId());
+        Associado associadoParaSalvamento = new Associado();
+        verificaSePautaEstaEmVotacao(associadoSalvo);
+        verificaSeSessaoEstaAberta(associadoSalvo);
+        associadoParaSalvamento.setId(associadoSalvo.getId());
+        associadoParaSalvamento.setNome(associadoSalvo.getNome());
+        associadoParaSalvamento.setVoto(associadoVotoDTO.isVoto());
+        associadoParaSalvamento.setPautas(associadoSalvo.getPautas());
+        associadoParaSalvamento.setCpf(associadoSalvo.getCpf());
+
+        associadoRepository.save(associadoParaSalvamento);
+    }
+    private void verificaSePautaEstaEmVotacao(Associado associado) {
+        if (!(verificaSeAssociadoPossuiPautaAberta(associado) && verificaSeASessaoDeVotacaoIniciou(associado))) throw new
+                BadRequestException("O associado não faz parte de nenhuma pauta em fase de votação!");
+    }
+
+    private void verificaUnicidadeDoCpfAoAlterarAssociadoExistente(String cpf, Long id) {
+        List<Associado> associados = associadoRepository.findAllByCpf(cpf);
+        if (!(associados.size() == 1 && id.equals(associados.get(0).getId()))) {
+            throw new BadRequestException("O CPF do associado informado já está registrado no " +
+                    "banco de dados. Verifique o associado de nome " + associados.get(0).getNome());
         }
     }
 
-    public void definirVoto(boolean voto, String cpf) {
-        Associado savedAssociado = findByCpf(cpf);
-        Associado associadoToBeSaved = new Associado();
-        if (doesAssociadoHavePauta(savedAssociado) && didSessaoStart(savedAssociado)) {
-            if(verificaSeSessaoEstaAberta(savedAssociado)) {
-                associadoToBeSaved.setId(savedAssociado.getId());
-                associadoToBeSaved.setNome(savedAssociado.getNome());
-                associadoToBeSaved.setVoto(voto);
-                associadoToBeSaved.setPautas(savedAssociado.getPautas());
-                associadoToBeSaved.setCpf(savedAssociado.getCpf());
-                associadoRepository.save(associadoToBeSaved);
-            }
-            else{
-                throw new BadRequestException("O periodo da sessao de voto já acabou!");
-            }
+    public boolean verificaUnicidadeDoCpfAoCriarAssociado(String cpf) {
+        List<Associado> associados = associadoRepository.findAllByCpf(cpf);
+        if (!(associados.isEmpty())) {
+            throw new BadRequestException("O CPF do associado informado já está registrado no " +
+                    "banco de dados. Verifique o associado de nome " + associados.get(0).getNome());
         }
-        else{
-            throw new BadRequestException("O associado não faz parte de nenhuma" +
-                    " pauta em fase de votação!");
-        }
+        return true;
     }
 
+    public boolean verificaSeAssociadoPossuiPautaAberta(Associado associado) {
+        verificaSeAssociadoNaoPossuiPautas(associado);
+        if(obtemUltimaPauta(associado).isConcluida()) throw new BadRequestException("O associado ainda faz parte de uma pauta ativa!");
+        return true;
+    }
+    private void verificaSeAssociadoNaoPossuiPautas(Associado associado) {
+        if (associado.getPautas().isEmpty()) throw new BadRequestException("O associado não faz parte de nenhuma pauta!");
+    }
+
+
+    private void verificaSeSessaoEstaAberta(Associado associado) {
+        Date presente = new Date();
+        if(presente.after(obtemUltimaPauta(associado).getSessao().getMomentoDoFim())) throw new
+                BadRequestException("O periodo da sessao de voto já acabou!");
+    }
+
+    private boolean verificaSeASessaoDeVotacaoIniciou(Associado associado) {
+        if (!(obtemUltimaPauta(associado).isSessaoIniciada())) {
+            throw new BadRequestException("A sessão de votos da pauta ainda não" +
+                    " foi aberta!");
+        }
+        return true;
+    }
     public void resetaVoto() {
         List<Associado> associados = associadoRepository.findAll();
 
@@ -118,68 +158,15 @@ public class AssociadoServiceImpl implements AssociadoService {
             associadoRepository.save(associado);
         }
     }
-
-    public boolean isCpfUnique(String cpf, Associado associadoEmValidacao, String requestMethod) {
-        boolean associadoCpfUnique = false;
-        List<Associado> associados = associadoRepository.findAll();
-        if (!(associados.isEmpty())) {
-            if (requestMethod.equals("put")) {
-                for (Associado associado : associados) {
-                    if ((associado.getCpf().equals(cpf)) && !(associado.getId().equals(associadoEmValidacao.getId()))) {
-                        throw new BadRequestException("O CPF do associado informado já está registrado no " +
-                                "banco de dados. Verifique o associado de nome " + associado.getNome());
-                    } else {
-                        associadoCpfUnique = true;
-                    }
-                }
-            } else if (requestMethod.equals("save")) {
-                for (Associado associado : associados) {
-                    if (associado.getCpf().equals(cpf)) {
-                        throw new BadRequestException("O CPF do associado informado já está registrado no " +
-                                "banco de dados. Verifique o associado de nome " + associado.getNome());
-                    } else {
-                        associadoCpfUnique = true;
-                    }
-                }
-            }
-        } else {
-            associadoCpfUnique = true;
-        }
-        return associadoCpfUnique;
-    }
-
-    public boolean doesAssociadoHavePauta(Associado associado) {
-        boolean pautaExists;
-        if (!(associado.getPautas().isEmpty())) {
-            pautaExists = !(associado.getPautas().get(associado.getPautas()
-                    .size() - 1).isConcluida());
-        } else {
-            pautaExists = false;
-
-        }
-
-        return pautaExists;
-    }
-    public boolean verificaSeSessaoEstaAberta(Associado associado){
-        Date presente = new Date();
-        boolean estaAberta;
-        if(presente.after(associado.getPautas().get(associado.getPautas()
-                .size() - 1).getSessao().getMomentoDoFim())){
-            estaAberta = false;
+    private Pauta obtemUltimaPauta(Associado associado) {
+        Pauta pauta;
+        if(associado.getPautas().size() == 1) {
+            pauta = associado.getPautas().get(0);
         }
         else{
-            estaAberta = true;
+            pauta = associado.getPautas().get(associado.getPautas()
+                    .size() - 1);
         }
-        return estaAberta;
-
-    }
-
-    public boolean didSessaoStart(Associado associado) {
-        if (!(associado.getPautas().get(associado.getPautas()
-                .size() - 1).isSessaoIniciada())) {
-            throw new BadRequestException("A sessão de votos da pauta ainda não" +
-                    " foi aberta!");
-        }
-        return true;
+        return pauta;
     }
 }

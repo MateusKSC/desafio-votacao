@@ -70,12 +70,14 @@ public class Pauta {
         }
     }
     public void verificaResultadoVotacao(){
-        if((this.votosPositivos - this.votosNegativos) > 0){
+        if ((this.votosPositivos - this.votosNegativos) <= 0) {
+            if ((this.votosPositivos - this.votosNegativos) < 0) {
+                this.resultadoVotacao = "Pauta Reprovada";
+            } else if (this.votosPositivos == this.votosNegativos) {
+                this.resultadoVotacao = "Empate na Votacao";
+            }
+        } else {
             this.resultadoVotacao = "Pauta Aprovada";
-        } else if ((this.votosPositivos - this.votosNegativos) < 0) {
-            this.resultadoVotacao = "Pauta Reprovada";
-        } else if (this.votosPositivos == this.votosNegativos) {
-            this.resultadoVotacao = "Empate na Votacao";
         }
     }
 
